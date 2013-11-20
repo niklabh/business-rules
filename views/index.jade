@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  h1= title
+  h1 Conditions and Actions Demo
+
+  h3 When these conditions are met...
+
+  #conditions
+
+  h3 Do these actions...
+
+  #actions
+
+
+  #demo-form
+    h3 Try changing these values...
+
+    div
+      label Name
+      input#nameField(type="text")
+
+    div
+      label Age
+      input#ageField(type="text", size="2")
+
+    div
+      label Occupation
+      select#occupationField
+
+    div
+      button#submit(type="submit") Run Conditions and Actions

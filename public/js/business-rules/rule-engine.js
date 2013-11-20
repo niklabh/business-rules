@@ -1,35 +1,35 @@
 var global = this;
 
-(function() {
+(function () {
   var standardOperators = {
-    present: function(actual, target) {
+    present: function (actual, target) {
       return !!actual;
     },
-    blank: function(actual, target) {
+    blank: function (actual, target) {
       return !actual;
     },
-    equalTo: function(actual, target) {
+    equalTo: function (actual, target) {
       return "" + actual === "" + target;
     },
-    notEqualTo: function(actual, target) {
+    notEqualTo: function (actual, target) {
       return "" + actual !== "" + target;
     },
-    greaterThan: function(actual, target) {
+    greaterThan: function (actual, target) {
       return parseFloat(actual, 10) > parseFloat(target, 10);
     },
-    greaterThanEqual: function(actual, target) {
+    greaterThanEqual: function (actual, target) {
       return parseFloat(actual, 10) >= parseFloat(target, 10);
     },
-    lessThan: function(actual, target) {
+    lessThan: function (actual, target) {
       return parseFloat(actual, 10) < parseFloat(target, 10);
     },
-    lessThanEqual: function(actual, target) {
+    lessThanEqual: function (actual, target) {
       return parseFloat(actual, 10) <= parseFloat(target, 10);
     },
-    includes: function(actual, target) {
+    includes: function (actual, target) {
       return ("" + actual).indexOf("" + target) > -1;
     },
-    matchesRegex: function(actual, target) {
+    matchesRegex: function (actual, target) {
       var r = target.replace(/^\/|\/$/g, "");
       var regex = new RegExp(r);
       return regex.test("" + actual);
@@ -40,14 +40,16 @@ var global = this;
     rule = rule || {};
     this.operators = {};
     this.actions = rule.actions || [];
-    this.conditions = rule.conditions || {all: []};
+    this.conditions = rule.conditions || {
+      all: []
+    };
     this.addOperators(standardOperators);
   }
 
   RuleEngine.prototype = {
-    run: function(conditionsAdapter, actionsAdapter, cb) {
+    run: function (conditionsAdapter, actionsAdapter, cb) {
       var out, error, _this = this;
-      this.matches(conditionsAdapter, function(err, result) {
+      this.matches(conditionsAdapter, function (err, result) {
         out = result;
         error = err;
         if (result && !err) _this.runActions(actionsAdapter);
@@ -57,9 +59,9 @@ var global = this;
       return out;
     },
 
-    matches: function(conditionsAdapter, cb) {
+    matches: function (conditionsAdapter, cb) {
       var out, err;
-      handleNode(this.conditions, conditionsAdapter, this, function(e, result) {
+      handleNode(this.conditions, conditionsAdapter, this, function (e, result) {
         if (e) {
           err = e;
           console.log("ERR", e.message, e.stack);
@@ -71,23 +73,23 @@ var global = this;
       if (!cb) return out;
     },
 
-    operator: function(name) {
+    operator: function (name) {
       return this.operators[name];
     },
 
-    addOperators: function(newOperators) {
+    addOperators: function (newOperators) {
       var _this = this;
-      for(var key in newOperators) {
-        if(newOperators.hasOwnProperty(key)) {
-          (function() {
+      for (var key in newOperators) {
+        if (newOperators.hasOwnProperty(key)) {
+          (function () {
             var op = newOperators[key];
             // synchronous style operator, needs to be wrapped
             if (op.length == 2) {
-              _this.operators[key] = function(actual, target, cb) {
+              _this.operators[key] = function (actual, target, cb) {
                 try {
                   var result = op(actual, target);
                   cb(null, result);
-                } catch(e) {
+                } catch (e) {
                   cb(e);
                 }
               };
@@ -95,8 +97,7 @@ var global = this;
             // asynchronous style, no wrapping needed
             else if (op.length == 3) {
               _this.operators[key] = op;
-            }
-            else {
+            } else {
               throw "Operators should have an arity of 2 or 3; " + key + " has " + op.length;
             }
           })();
@@ -104,12 +105,14 @@ var global = this;
       }
     },
 
-    runActions: function(actionsAdapter) {
-      for(var i=0; i < this.actions.length; i++) {
+    runActions: function (actionsAdapter) {
+      for (var i = 0; i < this.actions.length; i++) {
         var actionData = this.actions[i];
         var actionName = actionData.value;
         var actionFunction = actionsAdapter[actionName]
-        if(actionFunction) { actionFunction(new Finder(actionData)); }
+        if (actionFunction) {
+          actionFunction(new Finder(actionData));
+        }
       }
     }
   };
@@ -119,12 +122,14 @@ var global = this;
   }
 
   Finder.prototype = {
-    find: function() {
+    find: function () {
       var currentNode = this.data;
-      for(var i=0; i < arguments.length; i++) {
+      for (var i = 0; i < arguments.length; i++) {
         var name = arguments[i];
         currentNode = findByName(name, currentNode);
-        if(!currentNode) { return null; }
+        if (!currentNode) {
+          return null;
+        }
       }
       return currentNode.value;
     }
@@ -132,15 +137,17 @@ var global = this;
 
   function findByName(name, node) {
     var fields = node.fields || [];
-    for(var i=0; i < fields.length; i++) {
+    for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
-      if(field.name === name) { return field; }
+      if (field.name === name) {
+        return field;
+      }
     }
     return null;
   }
 
   function handleNode(node, obj, engine, cb) {
-    if(node.all || node.any || node.none) {
+    if (node.all || node.any || node.none) {
       handleConditionalNode(node, obj, engine, cb);
     } else {
       handleRuleNode(node, obj, engine, cb);
@@ -149,43 +156,44 @@ var global = this;
 
   function handleConditionalNode(node, obj, engine, cb) {
     try {
-      var isAll = !!node.all;
-      var isAny = !!node.any;
-      var isNone = !!node.none;
+      var isAll = !! node.all;
+      var isAny = !! node.any;
+      var isNone = !! node.none;
       var nodes = isAll ? node.all : node.any;
-      if (isNone) { nodes = node.none }
+      if (isNone) {
+        nodes = node.none
+      }
       if (nodes.length == 0) {
         return cb(null, true);
       }
       var currentNode, i = 0;
-      var next = function() {
+      var next = function () {
         try {
           currentNode = nodes[i];
           i++;
           if (currentNode) {
             handleNode(currentNode, obj, engine, done);
-          }
-          else {
+          } else {
             // If we have gone through all of the nodes and gotten
             // here, either they have all been true (success for `all`)
             // or all false (failure for `any`);
-            var r = isNone ? true : isAll; 
+            var r = isNone ? true : isAll;
             cb(null, r);
           }
-        } catch(e) {
+        } catch (e) {
           cb(e);
         }
       };
 
-      var done = function(err, result) {
+      var done = function (err, result) {
         if (err) return cb(err);
         if (isAll && !result) return cb(null, false);
-        if (isAny && !!result) return cb(null, true);
-        if (isNone && !!result) return cb(null, false);
+        if (isAny && !! result) return cb(null, true);
+        if (isNone && !! result) return cb(null, false);
         next();
       }
       next();
-    } catch(e) {
+    } catch (e) {
       cb(e);
     }
   }
@@ -195,16 +203,15 @@ var global = this;
       var value = obj[node.name];
       if (value && value.call) {
         if (value.length === 1) {
-          return value(function(result) {
+          return value(function (result) {
             compareValues(result, node.operator, node.value, engine, cb);
           });
-        }
-        else {
+        } else {
           value = value()
         }
       }
       compareValues(value, node.operator, node.value, engine, cb);
-    } catch(e) {
+    } catch (e) {
       cb(e);
     }
   }
@@ -214,7 +221,7 @@ var global = this;
       var operatorFunction = engine.operator(operator);
       if (!operatorFunction) throw "Missing " + operator + " operator";
       operatorFunction(actual, value, cb);
-    } catch(e) {
+    } catch (e) {
       cb(e);
     }
   }
