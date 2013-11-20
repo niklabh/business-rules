@@ -1,6 +1,5 @@
 # Business Rules for JavaScript
 
-[VIEW THE DEMO NOW](http://chrisjpowers.com/business-rules)
 
 When you're working in a business environment (especially an "enterprisy" environment),
 business rules make the world go 'round. Business-level decision makers need to be able
@@ -66,7 +65,7 @@ a `BusinessRules.RuleEngine` object for running the conditional logic.
 
 The `$.fn.actionsBuilder` has an identical API to `$.fn.conditionsBuilder`, but it uses a different data structure.
 The `fields` property should be an array of action objects. Each action object has a `label` and `name`.
-An action object may have a `fields` property that is an array of action objects, allowing for nested action data. 
+An action object may have a `fields` property that is an array of action objects, allowing for nested action data.
 All action objects that are not "top level" should also have a `fieldType` of `text`, `textarea` or `select`.
 
 Here's an example of what a "Send Email" action could look like:
