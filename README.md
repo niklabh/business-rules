@@ -1,3 +1,5 @@
+[VIEW THE DEMO NOW](http://vnykmshr.github.io/business-rules/)
+
 # Business Rules for JavaScript
 
 
