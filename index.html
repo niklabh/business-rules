@@ -1,284 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Business-rules by vnykmshr</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <title>Conditions Demo</title>
+    <script src="./js/vendor/jquery-1.8.3.js" type="text/javascript"></script>
+    <script src="./js/business-rules/conditions-builder.js" type="text/javascript"></script>
+    <script src="./js/business-rules/actions-builder.js" type="text/javascript"></script>
+    <script src="./js/business-rules/rule-engine.js" type="text/javascript"></script>
+    <script src="/js/demo.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/css/demo.css" />
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Business-rules</h1>
-        <p>A JavaScript library for building out the logic and UI for business rules.</p>
+    <h1>Conditions and Actions Demo</h1>
 
-        <p class="view"><a href="https://github.com/vnykmshr/business-rules">View the Project on GitHub <small>vnykmshr/business-rules</small></a></p>
+    <h3>When these conditions are met...</h3>
+    <div id="conditions"></div>
 
+    <h3>Do these actions...</h3>
+    <div id="actions"></div>
 
-        <ul>
-          <li><a href="https://github.com/vnykmshr/business-rules/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/vnykmshr/business-rules/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/vnykmshr/business-rules">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <p><a href="http://vnykmshr.github.io/business-rules/">VIEW THE DEMO NOW</a></p>
-
-<h1>
-<a id="business-rules-for-javascript" class="anchor" href="#business-rules-for-javascript" aria-hidden="true"><span class="octicon octicon-link"></span></a>Business Rules for JavaScript</h1>
-
-<p>When you're working in a business environment (especially an "enterprisy" environment),
-business rules make the world go 'round. Business-level decision makers need to be able
-to alter application behavior and logic with minimal technical invasiveness.</p>
-
-<p>Usually, business rule engines come packaged as $100K Java installations and a gaggle
-of business consultants. Let's just call this a lighter-weight solution.</p>
-
-<p>The goal of this library is to:</p>
-
-<ol>
-<li>Give JavaScript developers drop-in jQuery UI widgets for building business rule interfaces.</li>
-<li>Give developers a rule engine that can be ported to any server-side language for running business rules built with the UI tools.</li>
-</ol>
-
-<h2>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h2>
-
-<p>Checkout the examples directory if you just want to dive in, it demonstrates all the features
-pretty well!</p>
-
-<h2>
-<a id="fnconditionsbuilder" class="anchor" href="#fnconditionsbuilder" aria-hidden="true"><span class="octicon octicon-link"></span></a>$.fn.conditionsBuilder()</h2>
-
-<p>The <code>$.fn.conditionsBuilder()</code> method has two forms, the first being:</p>
-
-<div class="highlight highlight-javascript"><pre>$(<span class="pl-s1"><span class="pl-pds">"</span>#myDiv<span class="pl-pds">"</span></span>).conditionsBuilder({fields<span class="pl-k">:</span> [...], data<span class="pl-k">:</span> {...});</pre></div>
-
-<p>The first form creates a <code>ConditionsBuilder</code> object for the given DOM element with the passed fields and data.
-The <code>fields</code> param is an array of objects that define the factors that can be used in conditional statements.
-Each has a <code>label</code>, <code>name</code> and an array of <code>operators</code>. It may also have an <code>options</code> array of objects
-with <code>label</code> and <code>name</code>.</p>
-
-<p>Each operator is an object with <code>label</code>, <code>name</code> and <code>fieldType</code>. The <code>fieldType</code> can be:</p>
-
-<ul>
-<li>
-<code>"none"</code> - The operator does not require further data entry (ie <code>"present"</code>, <code>"blank"</code>).</li>
-<li>
-<code>"text"</code> - User will be presented with an input of <code>type=text</code>.</li>
-<li>
-<code>"textarea"</code> - User will be presented with a textarea.</li>
-<li>
-<code>"select"</code> - User will be presented with a select dropdown populated with the parent field's <code>options</code> array.</li>
-</ul>
-
-<p>The <code>data</code> param is an object that will be used to initially populate the UI (ie if business rules have already
-been created and the user wants to edit them). If the <code>data</code> option is not passed, the UI will be
-generated without any initial conditions.</p>
-
-<p>The object passed as <code>data</code> should be a "conditional object", meaning it has a single key of <code>all</code> or <code>any</code>
-and a value of an array of nodes. These nodes can either be rule objects or nested conditional objects.</p>
-
-<p>A rule object has <code>name</code>, <code>operator</code> and <code>value</code> strings. The <code>name</code> should match a field's <code>name</code> property,
-the <code>operator</code> should match an operator's <code>name</code> property, and the <code>value</code> is an arbitrary string value
-entered by the user in the UI.</p>
-
-<p>Once the UI has been built by the <code>ConditionsBuilder</code> and the user has entered information, the data can
-be retrieved by using the second form of the <code>conditionsBuilder</code> method:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> data <span class="pl-k">=</span> $(<span class="pl-s1"><span class="pl-pds">"</span>#myDiv<span class="pl-pds">"</span></span>).conditionsBuilder(<span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>);</pre></div>
-
-<p>This will serialize the entered conditionals into a data object. This object can be persisted and then later
-used to create a new <code>ConditionsBuilder</code> for editing. This data object will also be used to instantiate
-a <code>BusinessRules.RuleEngine</code> object for running the conditional logic.</p>
-
-<h2>
-<a id="fnactionsbuilder" class="anchor" href="#fnactionsbuilder" aria-hidden="true"><span class="octicon octicon-link"></span></a>$.fn.actionsBuilder()</h2>
-
-<p>The <code>$.fn.actionsBuilder</code> has an identical API to <code>$.fn.conditionsBuilder</code>, but it uses a different data structure.
-The <code>fields</code> property should be an array of action objects. Each action object has a <code>label</code> and <code>name</code>.
-An action object may have a <code>fields</code> property that is an array of action objects, allowing for nested action data.
-All action objects that are not "top level" should also have a <code>fieldType</code> of <code>text</code>, <code>textarea</code> or <code>select</code>.</p>
-
-<p>Here's an example of what a "Send Email" action could look like:</p>
-
-<div class="highlight highlight-javascript"><pre>$(<span class="pl-s1"><span class="pl-pds">"</span>#myDiv<span class="pl-pds">"</span></span>).actionsBuilder({fields<span class="pl-k">:</span> [
-  {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Send Email<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>sendEmail<span class="pl-pds">"</span></span>, fields<span class="pl-k">:</span> [
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>To<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>to<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>CC<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>cc<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>BCC<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>bcc<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>subject<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Body<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>textarea<span class="pl-pds">"</span></span>}
-  ]}
-]});</pre></div>
-
-<p>Action objects with a <code>fieldType</code> of <code>select</code> should not have a <code>fields</code> property -- rather they have an <code>options</code>
-property with a <code>label</code> and <code>name</code> for each option. That option object, however, can have a <code>fields</code> property.
-This allows you to specify nested fields that will only be displayed if the given option has been selected.</p>
-
-<p>Building on the last example, this allows the user to specify an email template, or use a custom Subject and Body:</p>
-
-<div class="highlight highlight-javascript"><pre>$(<span class="pl-s1"><span class="pl-pds">"</span>#myDiv<span class="pl-pds">"</span></span>).actionsBuilder({fields<span class="pl-k">:</span> [
-  {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Send Email<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>sendEmail<span class="pl-pds">"</span></span>, fields<span class="pl-k">:</span> [
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>To<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>to<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>CC<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>cc<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>BCC<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>bcc<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-    {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Email Template<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>template<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>select<span class="pl-pds">"</span></span>, options<span class="pl-k">:</span> [
-      {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Welcome Email<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>welcomeEmail<span class="pl-pds">"</span></span>},
-      {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Followup Email<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>followupEmail<span class="pl-pds">"</span></span>},
-      {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Custom Email<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>customEmail<span class="pl-pds">"</span></span>, fields<span class="pl-k">:</span> [
-        {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>subject<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>},
-        {label<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Body<span class="pl-pds">"</span></span>, name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>, fieldType<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>textarea<span class="pl-pds">"</span></span>}
-      ]}
-    ]}
-  ]}
-]});</pre></div>
-
-<p>In this example, the "Subject" and "Body" fields will only be displayed if the user has selected the "Custom Email"
-template option.</p>
-
-<p>To get the data out of the UI, run the <code>actionsBuilder</code> method with <code>"data"</code>:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> data <span class="pl-k">=</span> $(<span class="pl-s1"><span class="pl-pds">"</span>#myDiv<span class="pl-pds">"</span></span>).actionsBuilder(<span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>);</pre></div>
-
-<p>Each action data object has a <code>name</code> that matches the corresponding field's <code>value</code>, and a <code>value</code> property with the
-user-entered value. It may also have a <code>fields</code> array of nested action data objects, which correspond to the nested
-field structure of the builder.</p>
-
-<h2>
-<a id="businessrulesruleengine" class="anchor" href="#businessrulesruleengine" aria-hidden="true"><span class="octicon octicon-link"></span></a>BusinessRules.RuleEngine</h2>
-
-<p>While the <code>ConditionsBuilder</code> and <code>ActionsBuilder</code> give us a UI to build business rule configurations, we still need
-something to interpret the configuration, apply the logic and conditionally run the actions. This is where the
-<code>BusinessRules.RuleEngine</code> comes in.</p>
-
-<p>The <code>RuleEngine</code> is initialized with a <code>conditions</code> object and an <code>actions</code> array, just as they would be when fetched
-from the UI using <code>conditionsBuilder("data")</code> and <code>actionsBuilder("data")</code>. This would be a common way of instantiating
-a <code>RuleEngine</code>:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> engine <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BusinessRules.RuleEngine</span>({
-  conditions<span class="pl-k">:</span> $(<span class="pl-s1"><span class="pl-pds">"</span>#myConditions<span class="pl-pds">"</span></span>).conditionsBuilder(<span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>),
-  actions<span class="pl-k">:</span> $(<span class="pl-s1"><span class="pl-pds">"</span>#myActions<span class="pl-pds">"</span></span>).actionsBuilder(<span class="pl-s1"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>)
-});</pre></div>
-
-<p>Once your engine has been instantiated, you can use the <code>#run</code> method to apply the conditional logic to a set of data,
-and then conditionally run the actions. Since the engine is only responsible for running logic and shouldn't have to
-be aware of the actual data, you need to pass in an object that represents the context to run conditionals on,
-and another object with functions that map to the actions. For example:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> engine <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BusinessRules.RuleEngine</span>({
-  conditions<span class="pl-k">:</span> {all<span class="pl-k">:</span> [{name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, operator<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>present<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>}, {name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, operator<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>greaterThanEqual<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>21<span class="pl-pds">"</span></span>}]},
-  actions<span class="pl-k">:</span> [{name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>action-select<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>giveDrink<span class="pl-pds">"</span></span>, fields<span class="pl-k">:</span> [{name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>martini<span class="pl-pds">"</span></span>}]}]
-});
-
-<span class="pl-s">var</span> conditionsAdapter <span class="pl-k">=</span> {name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>Joe<span class="pl-pds">"</span></span>, age<span class="pl-k">:</span> <span class="pl-c1">22</span>};
-<span class="pl-s">var</span> actionsAdapter <span class="pl-k">=</span> {<span class="pl-en">giveDrink</span>: <span class="pl-st">function</span>(<span class="pl-vpf">data</span>) { <span class="pl-s3">alert</span>(<span class="pl-s1"><span class="pl-pds">"</span>Gave user a <span class="pl-pds">"</span></span> <span class="pl-k">+</span> data.<span class="pl-s3">find</span>(<span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>)); } };
-
-engine.run(conditionsAdapter, actionsAdapter);</pre></div>
-
-<p>Values used in the <code>conditionsAdapter</code> can be simple strings and numbers, but it can also be a function that will be lazily executed.
-For example, this adapter would pull the name and age from fields on the page (a more likely scenario than hard coded values):</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> conditionsAdapter <span class="pl-k">=</span> {
-  <span class="pl-en">name</span>: <span class="pl-st">function</span>() { $(<span class="pl-s1"><span class="pl-pds">"</span>#nameField<span class="pl-pds">"</span></span>).val(); },
-  <span class="pl-en">age</span>: <span class="pl-st">function</span>() { $(<span class="pl-s1"><span class="pl-pds">"</span>#ageField<span class="pl-pds">"</span></span>).val(); }
-};</pre></div>
-
-<p>It is also possible to use <em>asynchronous</em> functions in your conditionsAdapter. To do so,
-have your function accept a callback function and call it when you have your value.</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> conditionsAdapter <span class="pl-k">=</span> {
-  <span class="pl-en">logoVisible</span>: <span class="pl-st">function</span>(<span class="pl-vpf">done</span>) {
-    <span class="pl-c">// Cannot determine if logo is visible until DOM ready</span>
-    $(<span class="pl-st">function</span>() {
-      <span class="pl-s">var</span> visible <span class="pl-k">=</span> $(<span class="pl-s1"><span class="pl-pds">"</span>#logo<span class="pl-pds">"</span></span>).is(<span class="pl-s1"><span class="pl-pds">"</span>:visible<span class="pl-pds">"</span></span>);
-      done(visible);
-    });
-  }
-};</pre></div>
-
-<p>The <code>BusinessRules.RuleEngine</code> object can be used in either the browser or in a server environment (ie Node.js). It could also
-be ported to another language simply enough, or run inside a JavaScript runtime within Ruby, Java, etc.</p>
-
-<h3>
-<a id="conditional-operators" class="anchor" href="#conditional-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conditional Operators</h3>
-
-<p>The <code>RuleEngine</code> comes with the following standard operators that can be used inside conditionals:</p>
-
-<ul>
-<li>present</li>
-<li>blank</li>
-<li>equalTo</li>
-<li>notEqualTo</li>
-<li>greaterThan</li>
-<li>greaterThanEqual</li>
-<li>lessThan</li>
-<li>lessThanEqual</li>
-<li>includes</li>
-<li>matchesRegex</li>
-</ul>
-
-<p>Custom operators can be added to a <code>RuleEngine</code> using the <code>addOperators</code> method:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> engine <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BusinessRules.RuleEngine</span>({
-  conditions<span class="pl-k">:</span> {all<span class="pl-k">:</span> [{name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>password<span class="pl-pds">"</span></span>, operator<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>longerThan<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>6<span class="pl-pds">"</span></span>}]},
-  actions<span class="pl-k">:</span> []
-});
-
-engine.addOperators({
-  <span class="pl-en">longerThan</span>: <span class="pl-st">function</span>(<span class="pl-vpf">actual</span>, <span class="pl-vpf">length</span>) {
-    <span class="pl-k">return</span> actual.<span class="pl-sc">length</span> <span class="pl-k">&gt;</span> <span class="pl-s3">parseInt</span>(length, <span class="pl-c1">10</span>);
-  }
-});</pre></div>
-
-<p>It is also possible to create <em>asynchronous</em> operators if your logic cannot be run synchronously.
-To do so, simply have your operator function accept a third callback param and call it when
-you have your result:</p>
-
-<div class="highlight highlight-javascript"><pre>engine.addOperators({
-  <span class="pl-en">delayedOperator</span>: <span class="pl-st">function</span>(<span class="pl-vpf">actual</span>, <span class="pl-vpf">target</span>, <span class="pl-vpf">done</span>) {
-    <span class="pl-s3">setTimeout</span>(<span class="pl-st">function</span>() { done(<span class="pl-c1">true</span>); }, <span class="pl-c1">1000</span>);
-  }
-});</pre></div>
-
-<p>The <code>addOperators</code> method also allows you to override the standard operators if, heaven forbid, you find that necessary.</p>
-
-<h3>
-<a id="action-functions" class="anchor" href="#action-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Action Functions</h3>
-
-<p>When a function on your <code>actionsAdapter</code> object is called, it is passed a <code>Finder</code> object. The <code>Finder</code> object has a
-<code>data</code> property that will return the action's data structure so that you can traverse it yourself. This data
-structure can look something like:</p>
-
-<div class="highlight highlight-javascript"><pre>[{name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>martini<span class="pl-pds">"</span></span>, fields<span class="pl-k">:</span> [
-  {name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>oliveCount<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>3<span class="pl-pds">"</span></span>},
-  {name<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>shaken<span class="pl-pds">"</span></span>, value<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">"</span>yes<span class="pl-pds">"</span></span>}
-]}]</pre></div>
-
-<p>While you certainly can traverse this structure, chances are you just want to quickly access the values. This is why
-the <code>Finder</code> gives you the <code>find</code> convenience method, which takes one or more names and returns the matching value:</p>
-
-<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> actionsAdapter <span class="pl-k">=</span> {
-  <span class="pl-en">giveDrink</span>: <span class="pl-st">function</span>(<span class="pl-vpf">data</span>) {
-    <span class="pl-s">var</span> drinkType <span class="pl-k">=</span> data.<span class="pl-s3">find</span>(<span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>),
-        oliveCount <span class="pl-k">=</span> data.<span class="pl-s3">find</span>(<span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>oliveCount<span class="pl-pds">"</span></span>),
-        shaken <span class="pl-k">=</span> data.<span class="pl-s3">find</span>(<span class="pl-s1"><span class="pl-pds">"</span>drinkType<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>shaken<span class="pl-pds">"</span></span>);
-    <span class="pl-en">console</span><span class="pl-s3">.log</span>(drinkType, oliveCount, shaken); <span class="pl-c">// "martini", "3", "yes"</span>
-  }
-};</pre></div>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/vnykmshr">vnykmshr</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+    <form id="demo-form">
+      <h3>Try Changing These Values...</h3>
+      <div><label>Name</label><input type="text" id="nameField" /></div>
+      <div><label>Age</label><input type="text" id="ageField" size="2" /></div>
+      <div>
+        <label>Occupation</label>
+        <select id="occupationField"></select>
+      </div>
+      <div><button type="submit" id="submit">Run Conditions and Actions</button>
+    </form>
   </body>
 </html>
