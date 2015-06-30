@@ -1,4 +1,16 @@
 (function ($) {
+  $.fn.moveUp = function() {
+    $.each(this, function() {
+         $(this).after($(this).prev());   
+    });
+  };
+
+  $.fn.moveDown = function() {
+    $.each(this, function() {
+         $(this).before($(this).next());   
+    });
+  };
+
   $.fn.conditionsBuilder = function (options) {
     if (options == "data") {
       var builder = $(this).eq(0).data("conditionsBuilder");
@@ -41,6 +53,8 @@
       if (klass) {
         var out = {};
         out[klass] = [];
+        out.name = element.find(".name").val();
+        out.error = element.find(".error").val();
         element.find("> .conditional, > .rule").each(function () {
           out[klass].push(_this.collectDataFromNode($(this)));
         });
@@ -49,7 +63,9 @@
         return {
           name: element.find(".field").val(),
           operator: element.find(".operator").val(),
-          value: element.find(".value").val()
+          value: element.find(".value").val(),
+          error: element.find(".error").val(),
+          meta: element.find(".meta").val(),
         };
       }
     },
@@ -97,14 +113,27 @@
       }));
       selectWrapper.append(select);
       selectWrapper.append($("<span>", {
-        text: "of the following rules:"
+        text: "rules:"
+      }));
+      div.append(selectWrapper);
+
+      selectWrapper.append($("<input>", {
+        "class": "name",
+        "placeholder": "name"
+      }));
+      div.append(selectWrapper);
+
+      selectWrapper.append($("<textarea>", {
+        "class": "error",
+        "placeholder": "error"
       }));
       div.append(selectWrapper);
 
       var addRuleLink = $("<a>", {
         "href": "#",
-        "class": "add-rule",
-        "text": "Add Rule"
+        "class": "add-rule button",
+        "title": "Add Rule",
+        "text": "+"
       });
       var _this = this;
       addRuleLink.click(function (e) {
@@ -113,7 +142,9 @@
         var newField = {
           name: f.value,
           operator: f.operators[0],
-          value: null
+          value: null,
+          error: null,
+          meta: null
         };
         div.append(_this.buildRule(newField));
       });
@@ -121,8 +152,9 @@
 
       var addConditionLink = $("<a>", {
         "href": "#",
-        "class": "add-condition",
-        "text": "Add Sub-Condition"
+        "class": "add-condition button",
+        "title": "Add Sub Condition",
+        "text": "+_"
       });
       addConditionLink.click(function (e) {
         e.preventDefault();
@@ -131,17 +163,22 @@
           "all": [{
             name: f.value,
             operator: f.operators[0],
-            value: null
-          }]
+            value: null,
+            error: null,
+            meta: null
+          }],
+          name: null,
+          error: null
         };
         div.append(_this.buildConditional(newField));
       });
       div.append(addConditionLink);
 
       var removeLink = $("<a>", {
-        "class": "remove",
+        "class": "remove button",
         "href": "#",
-        "text": "Remove This Sub-Condition"
+        "title": "Remove this Sub Condition",
+        "text": "-"
       });
       removeLink.click(function (e) {
         e.preventDefault();
@@ -149,10 +186,42 @@
       });
       div.append(removeLink);
 
+      var moveUpLink = $("<a>", {
+        "class": "moveUp button",
+        "href": "#",
+        "text": "↑",
+        "title": "Move Up"
+      });
+      moveUpLink.click(function(e) {
+      e.preventDefault();
+      var cl = div.prev().attr('class');
+      if (cl === "rule")
+        div.moveUp();
+      });
+      div.append(moveUpLink);
+      
+      var moveDownLink = $("<a>", {
+        "class": "moveDown button",
+        "href": "#",
+        "text": "↓",
+        "title": "Move Down"
+      });
+      moveDownLink.click(function(e) {
+      e.preventDefault();
+      var cl = div.next().attr('class');
+      if (cl === "rule")
+        div.moveDown();
+      });
+      div.append(moveDownLink);
+
       var rules = ruleData[kind];
       for (var i = 0; i < rules.length; i++) {
         div.append(this.buildRules(rules[i]));
       }
+
+      if (ruleData.error) div.find("> .error").val(ruleData.error);
+      if (ruleData.name) div.find("> .name").val(ruleData.name);
+
       return div;
     },
 
@@ -161,16 +230,24 @@
         "class": "rule"
       });
       var fieldSelect = getFieldSelect(this.fields, ruleData);
+      var ruleMeta = getruleMeta();
+      var ruleError = getruleError();
       var operatorSelect = getOperatorSelect();
 
       fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
 
       ruleDiv.append(fieldSelect);
       ruleDiv.append(operatorSelect);
+      ruleDiv.append(ruleMeta);
+      ruleDiv.append(ruleError);
       ruleDiv.append(removeLink());
+      ruleDiv.append(moveUpLink());
+      ruleDiv.append(moveDownLink());
 
       fieldSelect.change();
       ruleDiv.find("> .value").val(ruleData.value);
+      if (ruleData.error) ruleDiv.find("> .error").val(ruleData.error);
+      if (ruleData.meta) ruleDiv.find("> .meta").val(ruleData.meta);
       return ruleDiv;
     },
 
@@ -183,6 +260,22 @@
       }
     }
   };
+
+  function getruleError() {
+    var error = $("<textarea>", {
+      "class": "error",
+      "placeholder": "error"
+    });
+    return error;
+  }
+
+  function getruleMeta() {
+    var meta = $("<input>", {
+      "class": "meta",
+      "placeholder": "meta"
+    });
+    return meta;
+  }
 
   function getFieldSelect(fields, ruleData) {
     var select = $("<select>", {
@@ -211,9 +304,10 @@
 
   function removeLink() {
     var removeLink = $("<a>", {
-      "class": "remove",
+      "class": "remove button",
       "href": "#",
-      "text": "Remove"
+      "text": "-",
+      "title": "Remove"
     });
     removeLink.click(onRemoveLinkClicked);
     return removeLink;
@@ -222,6 +316,42 @@
   function onRemoveLinkClicked(e) {
     e.preventDefault();
     $(this).parents(".rule").remove();
+  }
+
+  function moveUpLink() {
+    var moveUpLink = $("<a>", {
+      "class": "moveUp button",
+      "href": "#",
+      "text": "↑",
+      "title": "Move Up"
+    });
+    moveUpLink.click(onMoveUpLinkClicked);
+    return moveUpLink;
+  }
+
+  function onMoveUpLinkClicked(e) {
+    e.preventDefault();
+    var cl = $(this).parents(".rule").prev().attr('class');
+    if (cl === "rule")
+      $(this).parents(".rule").moveUp();
+  }
+
+  function moveDownLink() {
+    var moveDownLink = $("<a>", {
+      "class": "moveDown button",
+      "href": "#",
+      "text": "↓",
+      "title": "Move Down"
+    });
+    moveDownLink.click(onMoveDownLinkClicked);
+    return moveDownLink;
+  }
+
+  function onMoveDownLinkClicked(e) {
+    e.preventDefault();
+    var cl = $(this).parents(".rule").next().attr('class');
+    if (cl === "rule")
+      $(this).parents(".rule").moveDown();
   }
 
   function onFieldSelectChanged(operatorSelect, ruleData) {

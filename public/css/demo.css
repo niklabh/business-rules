@@ -1,3 +1,7 @@
+a {
+  text-decoration: none;
+}
+
 #conditions, #actions {
   margin: 20px 0;
 }
@@ -36,8 +40,15 @@
   color: red;
 }
 
+.name {
+  width: 80px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .rule input {
-  width: 250px;
+  width: 100px;
+  margin-right: 10px;
 }
 
 .rule select {
@@ -85,4 +96,14 @@
   #demo-form div {
     margin: 10px 0;
   }
+
+a.button {
+  border: 1px solid gray;
+  width: 20px;
+  display: inline-block;
+  padding: 0px 5px;
+  text-align: center;
+  border-radius: 2px;
+  margin-right: 3px;
+}
 
